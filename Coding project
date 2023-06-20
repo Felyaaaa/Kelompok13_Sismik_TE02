@@ -1,0 +1,61 @@
+#include <Servo.h>
+Servo catFeeder;
+const int trigPin = 10;
+const int echoPin = 11;
+const int sensor = 12;
+const int led = 13;
+bool buka = 0, sentuh = 0, kucing = 0;
+long duration;
+int distance;
+
+void makan(){
+  digitalWrite(led,HIGH);
+  catFeeder.write(180);
+  delay(2000);
+  catFeeder.write(0);
+  digitalWrite(led,LOW);
+}
+
+void setup() {
+  pinMode(sensor, INPUT);
+  pinMode(led, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  catFeeder.attach(9);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  sentuh = digitalRead(sensor);
+  kucing = distance <= 15;
+
+  if(kucing && sentuh && buka){  }
+  
+  else if (kucing && sentuh && !buka)
+  { makan();buka = 1;  } 
+
+  else if (kucing && !sentuh && buka)
+  {  } 
+
+  else if (kucing && !sentuh && !buka)
+  { makan();buka = 1;  } 
+
+  else if (!kucing && sentuh && buka){  }
+
+  else if (!kucing && sentuh && !buka)
+  { makan();buka = 1;  } 
+    
+  else if (!kucing && !sentuh && buka)
+  {    buka = 0;  } 
+
+  else if (!kucing && !sentuh && !buka)
+  {  }
+
+  delay(500);
+}
